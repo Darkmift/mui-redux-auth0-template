@@ -1,95 +1,94 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
+import styles from './page.module.css';
+import {
+  Avatar,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardMedia,
+  Container,
+  Typography,
+} from '@mui/material';
+import { red } from '@mui/material/colors';
+import Link from '@/components/Link';
+import { useThemeContext } from '@/context/theme-toggle';
+import { useUser } from '@auth0/nextjs-auth0/client';
 
 export default function Home() {
+  const { toggleTheme } = useThemeContext();
+
+  const { user, error, isLoading } = useUser();
+  
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>{error.message}</div>;
+
+  console.log('user', user);
+
   return (
     <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
+      <Container maxWidth="lg">
+        <Box
+          sx={{
+            my: 4,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
         >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
+          <Typography variant="h4" component="h1" sx={{ mb: 2 }}>
+            Material UI - Next.js example in TypeScript
+          </Typography>
+          <Box sx={{ maxWidth: 'sm', display: 'flex', gap: '10px' }}>
+            <Button variant="contained" onClick={toggleTheme}>
+              Toggle Theme
+            </Button>
+            <Button variant="contained" component={Link} noLinkStyle href="/api/auth/login">
+              Login
+            </Button>
+            <Button variant="contained" component={Link} noLinkStyle href="/api/auth/logout">
+              Logout
+            </Button>
+            <Button variant="contained" component={Link} noLinkStyle href="/about">
+              Go to the about page
+            </Button>
+          </Box>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+          <Box sx={{ maxWidth: 'sm', display: 'flex', gap: '10px' }}>
+            {user ? (
+              <Card sx={{ maxWidth: 345 }}>
+                <CardHeader
+                  avatar={
+                    <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+                      {user?.name ? user?.name?.[0] + user?.name?.[1] : '??'}
+                    </Avatar>
+                  }
+                  title={user.nickname || user.name || '??'}
+                  subheader={user.sub || '??'}
+                />
+                <CardMedia
+                  component="img"
+                  height="194"
+                  image={user.picture || ''}
+                  alt={user.name || user.nickname || '??'}
+                />
+                <CardContent>
+                  <Typography variant="body2" color="text.secondary">
+                    {user.email}
+                  </Typography>
+                </CardContent>
+              </Card>
+            ) : (
+              <Typography variant="h6" component="h2" sx={{ mb: 2 }}>
+                You are not logged in
+              </Typography>
+            )}
+          </Box>
+        </Box>
+      </Container>
     </main>
   );
 }
