@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/context/theme-toggle';
 import { UserProvider } from '@auth0/nextjs-auth0/client';
+import StoreProvider from './StoreProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,7 +23,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <UserProvider>
           <AppRouterCacheProvider>
-            <ThemeProvider>{children}</ThemeProvider>
+            <ThemeProvider>
+              <StoreProvider count={0}>{children}</StoreProvider>
+            </ThemeProvider>
           </AppRouterCacheProvider>
         </UserProvider>
       </body>
